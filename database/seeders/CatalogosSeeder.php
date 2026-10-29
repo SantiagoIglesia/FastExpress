@@ -31,8 +31,8 @@ class CatalogosSeeder extends Seeder
 
         // Rangos: (0.00, 5.00] y (5.00, 20.00]; peso_min exclusivo, peso_max inclusivo
         DB::table('rangos_peso')->insert($this->conFechas([
-            ['peso_min' => 0.00, 'peso_max' => 5.00,  'valor_peso' => 2.00],
-            ['peso_min' => 5.00, 'peso_max' => 20.00, 'valor_peso' => 4.00],
+            ['peso_min' => 0.01, 'peso_max' => 5.00,  'valor_peso' => 2.00],
+            ['peso_min' => 5.01, 'peso_max' => 20.00, 'valor_peso' => 4.00],
         ]));
 
         DB::table('estados_envio')->insert($this->conFechas([
