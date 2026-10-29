@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('dir_cliente', 150);
             $table->string('tel_cliente', 10);
             $table->integer('cant_env')->default(0);
-            $table->foreignId('tipo_cli_cod')->constrained('tipos_cliente', 'cod_tipo_cli');
+            $table->foreignId('tipo_cli_cod')->nullOnDelete()->constrained('tipos_cliente', 'cod_tipo_cli');
             $table->timestamps();
         });
     }
