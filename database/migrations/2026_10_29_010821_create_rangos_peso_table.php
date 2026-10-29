@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('rangos_peso', function (Blueprint $table) {
-            $table->integer('cod_rango')->primary();
-            $table->decimal('peso_min');
-            $table->decimal('peso_max');
-            $table->decimal('valor_peso');
+            $table->id('cod_rango');
+            $table->decimal('peso_min', 5, 2);
+            $table->decimal('peso_max', 5, 2);
+            $table->decimal('valor_peso', 10, 2);
             $table->timestamps();
         });
     }

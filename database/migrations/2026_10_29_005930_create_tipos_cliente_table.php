@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tipos_cliente', function (Blueprint $table) {
-            $table->integer('cod_tipo_cli')->primary();
+            $table->id('cod_tipo_cli');
             $table->string('nom_tipo_cli', 100);
-            $table->decimal('porc_descuento');
+            $table->decimal('porc_descuento', 5, 2);
             $table->timestamps();
         });
     }

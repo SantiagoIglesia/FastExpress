@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('parametros', function (Blueprint $table) {
-            $table->integer('cod_param')->primary();
+            $table->id('cod_param');
             $table->string('nom_param', 100);
-            $table->decimal('valor');
+            $table->decimal('valor', 10, 2);
             $table->timestamps();
         });
     }
