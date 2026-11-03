@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Parametro extends Model
 {
     protected $fillable = [
-        'cod_param', 'nom_param', 'valor'
+        'nom_param', 'valor'
     ];
+
+    protected $table = 'parametros';
+
+    protected $primaryKey = 'cod_param';
+
+    protected $casts = ['valor' => 'float'];
 }
