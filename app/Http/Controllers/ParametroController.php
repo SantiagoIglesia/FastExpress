@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreParametroRequest;
+use App\Http\Requests\UpdateParametroRequest;
 use App\Models\Parametro;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class ParametroController extends Controller
 {
@@ -26,14 +27,9 @@ class ParametroController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreParametroRequest $request)
     {
-        $validated = $request->validate([
-            'nom_param' => 'required|string|max:100|unique:parametros,nom_param',
-            'valor' => 'required|numeric|decimal:0,2|min:0.1'
-        ]);
-
-        $parametro = Parametro::create($validated);
+        $parametro = Parametro::create($request->validated());
 
         return response()->json($parametro, 201);
     }
@@ -41,38 +37,29 @@ class ParametroController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Parametro $parametro)
     {
-        $parametro = Parametro::findOrFail($id);
-
         return response()->json($parametro);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(UpdateParametroRequest $request, Parametro $parametro)
     {
-        $parametro = Parametro::findOrFail($id);
-
-        $validated = $request->validate([
-            'nom_param' => ['required', 'string', 'max:100', Rule::unique('parametros', 'nom_param')->ignore($parametro->cod_param, 'cod_param')],
-            'valor' => ['required', 'numeric', 'decimal:0,2', 'min:0.1']
-        ]);
-
-        $parametro->update($validated);
-
+        $parametro->update($request->validated());
+    
         return response()->json($parametro);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Parametro $parametro)
     {
-        $parametro = Parametro::findOrFail($id);
         $parametro->delete();
 
-        return response()->json(['message' => 'Parámetro eliminado correctamente.']);
+        //return response()->json(['message' => 'Parámetro eliminado correctamente.']);
+        return response()->noContent();
     }
 }
