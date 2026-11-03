@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tipos_envio', function (Blueprint $table) {
             $table->id('cod_tipo_env');
-            $table->string('nom_tipo_env', 100);
+            $table->string('nom_tipo_env', 100)->unique();
             $table->decimal('porc_recargo', 5, 2);
             $table->timestamps();
         });

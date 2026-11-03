@@ -14,5 +14,5 @@ class Parametro extends Model
 
     protected $primaryKey = 'cod_param';
 
-    protected $casts = ['valor' => 'float'];
+    protected $casts = ['valor' => 'decimal:2'];
 }

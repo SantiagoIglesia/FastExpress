@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('parametros', function (Blueprint $table) {
             $table->id('cod_param');
-            $table->string('nom_param', 100);
+            $table->string('nom_param', 100)->unique();
             $table->decimal('valor', 10, 2);
             $table->timestamps();
         });
