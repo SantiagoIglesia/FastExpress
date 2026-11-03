@@ -17,7 +17,7 @@ class ParametroController extends Controller
         $query = Parametro::query();
 
         //Listar parámetros por nombre
-        if($request->has('nom_param')) {
+        if($request->filled('nom_param')) {
             $query->where('nom_param', $request->input('nom_param'));
         }
 
