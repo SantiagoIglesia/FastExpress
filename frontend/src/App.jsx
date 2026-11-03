@@ -1,16 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function App() {
+  // Estados del formulario
   const [formData, setFormData] = useState({
     clienteCod: '',
     peso: '',
-    tipoCliente: 'NUEVO', // BR-03
-    tipoEnvio: 'ESTANDAR' // BR-04
+    tipoCliente: 'NUEVO',
+    tipoEnvio: 'ESTANDAR'
   });
 
+  // Estado para los parámetros cargados del Backend
+  const [parametros, setParametros] = useState(null);
   const [resultado, setResultado] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // 1. Cargar parámetros iniciales desde el Backend al montar el componente
+  useEffect(() => {
+    const obtenerParametros = async () => {
+      try {
+        // Ajusta la URL si el backend usa un puerto diferente (ej. 8080, 5000, 3000)
+        const res = await fetch('http://localhost:8080/api/parametros');
+        if (res.ok) {
+          const data = await res.json();
+          setParametros(data);
+        }
+      } catch (err) {
+        console.log('Backend en local no disponible aun para /api/parametros');
+      }
+    };
+    obtenerParametros();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -32,7 +52,7 @@ export default function App() {
       return false;
     }
 
-    // BR-02: Límite excedido si es mayor a 20 kg
+    // Regla BR-02: Límite de 20 kg
     if (pesoNum > 20.00) {
       setError('El peso excede el límite permitido de 20.00 kg. Envío rechazado.');
       return false;
@@ -49,7 +69,6 @@ export default function App() {
     setResultado(null);
 
     try {
-      // Ajusta este puerto al puerto donde tu compañero corra la API backend
       const response = await fetch('http://localhost:8080/api/cotizaciones', {
         method: 'POST',
         headers: {
@@ -79,6 +98,13 @@ export default function App() {
   return (
     <div style={{ maxWidth: '500px', margin: '40px auto', fontFamily: 'sans-serif', padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
       <h2>Cotizador de Envíos FastExpress</h2>
+
+      {/* Indicador de conexión con la API */}
+      {parametros && (
+        <div style={{ fontSize: '12px', color: 'green', marginBottom: '10px' }}>
+          ✓ Conectado a la API local (/api/parametros)
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
         <div>
@@ -119,8 +145,6 @@ export default function App() {
             <option value="VIP">VIP (20% desc.)</option>
           </select>
         </div>
-
-    
 
         <div>
           <label style={{ display: 'block', marginBottom: '5px' }}>Tipo de Envío:</label>
