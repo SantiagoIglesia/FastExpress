@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ParametroController;
+use App\Http\Controllers\TipoClienteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -9,3 +10,4 @@ use Illuminate\Support\Facades\Route;
 })->middleware('auth:sanctum');*/
 
 Route::apiResource('parametros', ParametroController::class);
+Route::apiResource('tipos_cliente', TipoClienteController::class)->parameters(['tipos_cliente' => 'tipo_cliente']);

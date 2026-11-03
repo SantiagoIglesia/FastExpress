@@ -16,7 +16,7 @@ class StoreParametroRequest extends ParametroRequest
     {
         return [
             'nom_param' => ['required', 'string', 'max:100', 'unique:parametros,nom_param'],
-            'valor' => ['required', 'numeric', 'decimal:0,2', 'min:0.1'],
+            'valor'     => ['required', 'numeric', 'decimal:0,2', 'min:0.1'],
         ];
     }
 }

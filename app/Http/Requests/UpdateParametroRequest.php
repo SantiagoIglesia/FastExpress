@@ -19,9 +19,8 @@ class UpdateParametroRequest extends ParametroRequest
         $parametro = $this->route('parametro');
 
         return [
-            'nom_param' => ['required', 'string', 'max:100',
-                Rule::unique('parametros', 'nom_param')->ignore($parametro->cod_param, 'cod_param')],
-            'valor' => ['required', 'numeric', 'decimal:0,2', 'min:0.1'],
+            'nom_param' => ['required', 'string', 'max:100', Rule::unique('parametros', 'nom_param')->ignore($parametro->cod_param, 'cod_param')],
+            'valor'     => ['required', 'numeric', 'decimal:0,2', 'min:0.1'],
         ];
     }
 }
