@@ -120,6 +120,8 @@ export default function App() {
           </select>
         </div>
 
+    
+
         <div>
           <label style={{ display: 'block', marginBottom: '5px' }}>Tipo de Envío:</label>
           <select 
