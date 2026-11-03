@@ -20,7 +20,7 @@ export default function App() {
     const obtenerParametros = async () => {
       try {
         // Ajusta la URL si el backend usa un puerto diferente (ej. 8080, 5000, 3000)
-        const res = await fetch('http://localhost:8080/api/parametros');
+        const res = await fetch('http://localhost:8000/api/parametros');
         if (res.ok) {
           const data = await res.json();
           setParametros(data);
@@ -69,7 +69,7 @@ export default function App() {
     setResultado(null);
 
     try {
-      const response = await fetch('http://localhost:8080/api/cotizaciones', {
+      const response = await fetch('http://localhost:8000/api/cotizaciones', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
