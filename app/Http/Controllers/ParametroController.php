@@ -59,7 +59,6 @@ class ParametroController extends Controller
     {
         $parametro->delete();
 
-        //return response()->json(['message' => 'Parámetro eliminado correctamente.']);
-        return response()->noContent();
+        return response()->json(['message' => 'Parámetro eliminado correctamente.']);
     }
 }
