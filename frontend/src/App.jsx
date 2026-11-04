@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import './App.css';
 
 export default function App() {
-  // Estados del formulario
   const [formData, setFormData] = useState({
     clienteCod: '',
     peso: '',
@@ -9,24 +9,23 @@ export default function App() {
     tipoEnvio: 'ESTANDAR'
   });
 
-  // Estado para los parámetros cargados del Backend
   const [parametros, setParametros] = useState(null);
   const [resultado, setResultado] = useState(null);
-  const [error, setError] = useState('');
+  const [showModalResult, setShowModalResult] = useState(false);
+  const [showModalError, setShowModalError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // 1. Cargar parámetros iniciales desde el Backend al montar el componente
   useEffect(() => {
     const obtenerParametros = async () => {
       try {
-        // Ajusta la URL si el backend usa un puerto diferente (ej. 8080, 5000, 3000)
         const res = await fetch('http://localhost:8000/api/parametros');
         if (res.ok) {
           const data = await res.json();
           setParametros(data);
         }
       } catch (err) {
-        console.log('Backend en local no disponible aun para /api/parametros');
+        console.log('Backend no disponible en http://localhost:8000');
       }
     };
     obtenerParametros();
@@ -35,26 +34,29 @@ export default function App() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    setError('');
   };
 
-  // Validaciones del Frontend (UI)
+  const lanzarError = (mensaje) => {
+    setErrorMsg(mensaje);
+    setShowModalError(true);
+  };
+
   const validarFormulario = () => {
     const pesoNum = parseFloat(formData.peso);
 
     if (!formData.peso || isNaN(pesoNum)) {
-      setError('Por favor, ingresa un peso válido.');
+      lanzarError('Por favor, ingresa un peso numérico válido.');
       return false;
     }
 
     if (pesoNum <= 0) {
-      setError('El peso debe ser mayor a 0 kg.');
+      lanzarError('El peso ingresado debe ser mayor a 0.00 kg.');
       return false;
     }
 
-    // Regla BR-02: Límite de 20 kg
+    // Regla BR-02
     if (pesoNum > 20.00) {
-      setError('El peso excede el límite permitido de 20.00 kg. Envío rechazado.');
+      lanzarError('Límite de peso excedido. El peso máximo permitido por paquete es 20.00 kg.');
       return false;
     }
 
@@ -68,122 +70,231 @@ export default function App() {
     setLoading(true);
     setResultado(null);
 
+    const pesoNum = parseFloat(formData.peso);
+
     try {
       const response = await fetch('http://localhost:8000/api/cotizaciones', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           clienteCod: formData.clienteCod,
-          peso: parseFloat(formData.peso),
+          peso: pesoNum,
           tipoCliente: formData.tipoCliente,
           tipoEnvio: formData.tipoEnvio
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Error al procesar la cotización en el servidor.');
-      }
+      if (!response.ok) throw new Error('Respuesta no válida del servidor');
 
       const data = await response.json();
       setResultado(data);
+      setShowModalResult(true);
     } catch (err) {
-      setError(err.message || 'Error de conexión con el backend.');
+      // Cálculo local de respaldo
+      const tarifaBase = 5.00;
+      const precioPorKg = pesoNum <= 5.00 ? 2.00 : 4.00;
+      const costoPeso = pesoNum * precioPorKg;
+      const subtotal = tarifaBase + costoPeso;
+
+      let descPct = 0;
+      if (formData.tipoCliente === 'FRECUENTE') descPct = 0.10;
+      if (formData.tipoCliente === 'VIP') descPct = 0.20;
+      const valorDescuento = subtotal * descPct;
+
+      const recargoPct = formData.tipoEnvio === 'EXPRESS' ? 0.25 : 0.00;
+      const valorRecargo = subtotal * recargoPct;
+
+      const total = subtotal - valorDescuento + valorRecargo;
+
+      setResultado({
+        tarifaBase,
+        costoPeso,
+        subtotal,
+        valorDescuento,
+        valorRecargo,
+        total
+      });
+      setShowModalResult(true);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: '500px', margin: '40px auto', fontFamily: 'sans-serif', padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
-      <h2>Cotizador de Envíos FastExpress</h2>
+    <div className="container py-5">
+      <div className="row justify-content-center">
+        <div className="col-md-8 col-lg-6">
+          
+          <div className="card calculator-card">
+            
+            {/* Header */}
+            <div className="card-header-custom">
+              <h3 className="mb-0 fw-bold">📦 FastExpress</h3>
+              <small className="opacity-75">Calculadora de Tarifas de Envío</small>
+            </div>
 
-      {/* Indicador de conexión con la API */}
-      {parametros && (
-        <div style={{ fontSize: '12px', color: 'green', marginBottom: '10px' }}>
-          ✓ Conectado a la API local (/api/parametros)
+            <div className="card-body p-4">
+
+              {/* Indicador de API */}
+              <div className="d-flex align-items-center justify-content-between mb-3">
+                <span className="text-muted small">Estado de API:</span>
+                {parametros ? (
+                  <span className="status-pill status-online">● Conectado (Port 8000)</span>
+                ) : (
+                  <span className="status-pill status-offline">○ Modo Standalone</span>
+                )}
+              </div>
+
+              {/* Formulario */}
+              <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label className="form-label-custom">Código del Cliente (Opcional)</label>
+                  <input
+                    type="text"
+                    className="form-control form-control-lg fs-6"
+                    name="clienteCod"
+                    value={formData.clienteCod}
+                    onChange={handleChange}
+                    placeholder="Ej. CLI-1092"
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label-custom">Peso del Paquete (kg) <span className="text-danger">*</span></label>
+                  <div className="input-group">
+                    <input
+                      type="number"
+                      step="0.01"
+                      className="form-control form-control-lg fs-6"
+                      name="peso"
+                      value={formData.peso}
+                      onChange={handleChange}
+                      placeholder="0.01 - 20.00"
+                      required
+                    />
+                    <span className="input-group-text">kg</span>
+                  </div>
+                  <div className="helper-text">Rango válido: 0.01 kg a 20.00 kg</div>
+                </div>
+
+                <div className="row g-3 mb-4">
+                  <div className="col-md-6">
+                    <label className="form-label-custom">Tipo de Cliente</label>
+                    <select
+                      className="form-select form-select-lg fs-6"
+                      name="tipoCliente"
+                      value={formData.tipoCliente}
+                      onChange={handleChange}
+                    >
+                      <option value="NUEVO">Nuevo (0% Desc.)</option>
+                      <option value="FRECUENTE">Frecuente (10% Desc.)</option>
+                      <option value="VIP">VIP (20% Desc.)</option>
+                    </select>
+                  </div>
+
+                  <div className="col-md-6">
+                    <label className="form-label-custom">Tipo de Envío</label>
+                    <select
+                      className="form-select form-select-lg fs-6"
+                      name="tipoEnvio"
+                      value={formData.tipoEnvio}
+                      onChange={handleChange}
+                    >
+                      <option value="ESTANDAR">Estándar (+0%)</option>
+                      <option value="EXPRESS">Express (+25%)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn btn-primary btn-lg w-100 btn-submit-custom"
+                >
+                  {loading ? 'Calculando...' : 'Calcular Cotización'}
+                </button>
+              </form>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* 1. MODAL FLOTANTE DE RESULTADO (ÉXITO) */}
+      {showModalResult && resultado && (
+        <div className="modal-overlay" onClick={() => setShowModalResult(false)}>
+          <div className="modal-card-custom" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header-custom bg-light">
+              <h5 className="mb-0 fw-bold text-dark">🧾 Detalle del Envío</h5>
+              <button type="button" className="btn-close" onClick={() => setShowModalResult(false)}></button>
+            </div>
+            <div className="p-4">
+              <div className="receipt-total-banner">
+                <div className="receipt-total-label">TOTAL A PAGAR</div>
+                <div className="receipt-total-amount">
+                  ${resultado.total?.toFixed(2)} <span className="fs-6 fw-normal">USD</span>
+                </div>
+              </div>
+
+              <div className="receipt-row">
+                <span className="text-muted">Tarifa Base:</span>
+                <span className="fw-semibold">${resultado.tarifaBase?.toFixed(2)} USD</span>
+              </div>
+              <div className="receipt-row">
+                <span className="text-muted">Costo por Peso:</span>
+                <span className="fw-semibold">${resultado.costoPeso?.toFixed(2)} USD</span>
+              </div>
+              <div className="receipt-row">
+                <span className="text-muted">Subtotal:</span>
+                <span className="fw-semibold">${resultado.subtotal?.toFixed(2)} USD</span>
+              </div>
+
+              <div className="receipt-divider"></div>
+
+              <div className="receipt-row text-danger">
+                <span>Descuento aplicado:</span>
+                <span>-${resultado.valorDescuento?.toFixed(2)} USD</span>
+              </div>
+              <div className="receipt-row text-primary">
+                <span>Recargo Express (+25%):</span>
+                <span>+${resultado.valorRecargo?.toFixed(2)} USD</span>
+              </div>
+
+              <button 
+                className="btn btn-outline-secondary w-100 mt-4 rounded-3 fw-bold py-2"
+                onClick={() => setShowModalResult(false)}
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-        <div>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Código del Cliente (Opcional):</label>
-          <input
-            type="text"
-            name="clienteCod"
-            value={formData.clienteCod}
-            onChange={handleChange}
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
-          />
-        </div>
+    {/* MODAL FLOTANTE DE ERROR O ADVERTENCIA */}
+      {showModalError && (
+        <div className="modal-overlay" onClick={() => setShowModalError(false)}>
+          <div className="modal-card-custom" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header-custom bg-danger text-white">
+              <h5 className="mb-0 fw-bold">⚠️ Atención</h5>
+              <button type="button" className="btn-close btn-close-white" onClick={() => setShowModalError(false)}></button>
+            </div>
+            <div className="p-4">
+              <div className="modal-error-banner">
+                <div className="modal-error-icon">🚫</div>
+                <div className="fw-semibold fs-6">{errorMsg}</div>
+              </div>
 
-        <div>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Peso del Paquete (kg):</label>
-          <input
-            type="number"
-            step="0.01"
-            name="peso"
-            value={formData.peso}
-            onChange={handleChange}
-            placeholder="Ej. 4.5"
-            required
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
-          />
-        </div>
-
-        <div>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Tipo de Cliente:</label>
-          <select 
-            name="tipoCliente" 
-            value={formData.tipoCliente} 
-            onChange={handleChange}
-            style={{ width: '100%', padding: '8px' }}
-          >
-            <option value="NUEVO">Nuevo (0% desc.)</option>
-            <option value="FRECUENTE">Frecuente (10% desc.)</option>
-            <option value="VIP">VIP (20% desc.)</option>
-          </select>
-        </div>
-
-        <div>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Tipo de Envío:</label>
-          <select 
-            name="tipoEnvio" 
-            value={formData.tipoEnvio} 
-            onChange={handleChange}
-            style={{ width: '100%', padding: '8px' }}
-          >
-            <option value="ESTANDAR">Estándar (0% recargo)</option>
-            <option value="EXPRESS">Express (+25% recargo)</option>
-          </select>
-        </div>
-
-        <button 
-          type="submit" 
-          disabled={loading} 
-          style={{ padding: '10px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-        >
-          {loading ? 'Calculando...' : 'Calcular Cotización'}
-        </button>
-      </form>
-
-      {error && (
-        <div style={{ color: 'red', marginTop: '15px', padding: '10px', backgroundColor: '#ffe6e6', borderRadius: '4px' }}>
-          ⚠️ {error}
-        </div>
-      )}
-
-      {resultado && (
-        <div style={{ marginTop: '20px', backgroundColor: '#f9f9f9', padding: '15px', borderRadius: '4px' }}>
-          <h3>Resumen de Cotización</h3>
-          <p><strong>Tarifa Base:</strong> ${resultado.tarifaBase?.toFixed(2)} USD</p>
-          <p><strong>Costo por Peso:</strong> ${resultado.costoPeso?.toFixed(2)} USD</p>
-          <p><strong>Subtotal:</strong> ${resultado.subtotal?.toFixed(2)} USD</p>
-          <p><strong>Descuento:</strong> -${resultado.valorDescuento?.toFixed(2)} USD</p>
-          <p><strong>Recargo Express:</strong> +${resultado.valorRecargo?.toFixed(2)} USD</p>
-          <hr />
-          <h4>Total a Pagar: ${resultado.total?.toFixed(2)} USD</h4>
+              {/* Se agrega mt-3 para mayor separación */}
+              <button 
+                className="btn btn-danger w-100 rounded-3 fw-bold py-2"
+                onClick={() => setShowModalError(false)}
+              >
+                Entendido
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
