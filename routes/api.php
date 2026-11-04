@@ -5,6 +5,7 @@ use App\Http\Controllers\TipoClienteController;
 use App\Http\Controllers\EstadoEnvioController;
 use App\Http\Controllers\TipoEnvioController;
 use App\Http\Controllers\RangoPesoController;
+use App\Http\Controllers\ClienteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +18,4 @@ Route::apiResource('tipos_cliente', TipoClienteController::class)->parameters(['
 Route::apiResource('estados_envio', EstadoEnvioController::class)->parameters(['estados_envio' => 'estado_envio']);
 Route::apiResource('tipos_envio', TipoEnvioController::class)->parameters(['tipos_envio' => 'tipo_envio']);
 Route::apiResource('rangos_peso', RangoPesoController::class)->parameters(['rangos_peso' => 'rango_peso']);
+Route::apiResource('clientes', ClienteController::class);
