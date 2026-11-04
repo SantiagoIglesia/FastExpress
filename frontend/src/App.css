@@ -1,3 +1,35 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f4f6f9 !important; 
+  min-height: 100vh;
+}
+
+/* Centrado del contenedor global */
+#root {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f4f6f9;
+}
+
+/* Tarjeta principal con el ancho controlado */
+.calculator-card {
+  border: none;
+  border-radius: 1.25rem;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  overflow: hidden;
+  max-width: 460px; 
+  margin: 0 auto;  
+}
+
+.card-header-custom {
+  background-color: #176B45;
+  color: #ffffff;
+  padding: 1.8rem 1rem;
+  text-align: center;
+}
+
 /* Tarjeta principal */
 .calculator-card {
   border: none;
