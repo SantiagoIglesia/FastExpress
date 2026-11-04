@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ParametroController;
 use App\Http\Controllers\TipoClienteController;
+use App\Http\Controllers\EstadoEnvioController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -11,3 +12,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::apiResource('parametros', ParametroController::class);
 Route::apiResource('tipos_cliente', TipoClienteController::class)->parameters(['tipos_cliente' => 'tipo_cliente']);
+Route::apiResource('estados_envio', EstadoEnvioController::class)->parameters(['estados_envio' => 'estado_envio']);
