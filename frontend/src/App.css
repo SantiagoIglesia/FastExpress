@@ -5,14 +5,14 @@ body {
   min-height: 100vh;
 }
 
-/* Centrado del contenedor global */
+
 #root {
   width: 100%;
   min-height: 100vh;
   background-color: #f4f6f9;
 }
 
-/* Tarjeta principal con el ancho controlado */
+
 .calculator-card {
   border: none;
   border-radius: 1.25rem;
@@ -92,7 +92,6 @@ body {
   box-shadow: 0 6px 15px rgba(13, 110, 253, 0.3);
 }
 
-/* Modal Flotante de Resultado */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -151,7 +150,7 @@ body {
   border-radius: 1rem;
   padding: 1.5rem;
   text-align: center;
-  margin-bottom: 1.75rem; /* Aumentamos la distancia con el botón */
+  margin-bottom: 1.75rem;
 }
 
 

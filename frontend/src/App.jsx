@@ -272,7 +272,7 @@ export default function App() {
         </div>
       )}
 
-    {/* MODAL FLOTANTE DE ERROR O ADVERTENCIA */}
+    
       {showModalError && (
         <div className="modal-overlay" onClick={() => setShowModalError(false)}>
           <div className="modal-card-custom" onClick={(e) => e.stopPropagation()}>
