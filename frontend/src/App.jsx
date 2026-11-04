@@ -63,7 +63,7 @@ export default function App() {
     return true;
   };
 
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validarFormulario()) return;
 
@@ -72,25 +72,40 @@ export default function App() {
 
     const pesoNum = parseFloat(formData.peso);
 
+    // Mapeo simple de cadenas a los IDs numéricos requeridos por la BD
+    const tipoEnvioCod = formData.tipoEnvio === 'EXPRESS' ? 2 : 1; 
+    const tipoClienteCod = formData.tipoCliente === 'VIP' ? 3 : (formData.tipoCliente === 'FRECUENTE' ? 2 : 1);
+
     try {
-      const response = await fetch('http://localhost:8000/api/cotizaciones', {
+      // Petición POST al endpoint de Laravel
+      const response = await fetch('http://localhost:8000/api/envios', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          clienteCod: formData.clienteCod,
-          peso: pesoNum,
-          tipoCliente: formData.tipoCliente,
-          tipoEnvio: formData.tipoEnvio
+          Cliente_Cod: formData.clienteCod || null,
+          Peso_Envio: pesoNum,
+          Tipo_Env_Cod: tipoEnvioCod,
+          Tipo_Cli_Cod: tipoClienteCod
         }),
       });
 
       if (!response.ok) throw new Error('Respuesta no válida del servidor');
 
       const data = await response.json();
-      setResultado(data);
+
+      // Adaptación si el backend responde con los nombres de la BD (snake_case o PascalCase)
+      setResultado({
+        tarifaBase: data.Tarifa_Base_Envio ?? data.tarifaBase ?? 5.00,
+        costoPeso: data.Costo_Peso_Envio ?? data.costoPeso ?? (pesoNum <= 5 ? pesoNum * 2 : pesoNum * 4),
+        subtotal: data.Subtotal_Envio ?? data.subtotal ?? 0,
+        valorDescuento: data.Valor_Desc_Envio ?? data.valorDescuento ?? 0,
+        valorRecargo: data.Valor_Rec_Envio ?? data.valorRecargo ?? 0,
+        total: data.Total_Envio ?? data.total ?? 0
+      });
       setShowModalResult(true);
     } catch (err) {
-      // Cálculo local de respaldo
+      
+      // MOCK BACKUP: Cálculo local directo si la API de Laravel está apagada
       const tarifaBase = 5.00;
       const precioPorKg = pesoNum <= 5.00 ? 2.00 : 4.00;
       const costoPeso = pesoNum * precioPorKg;
