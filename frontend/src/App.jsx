@@ -127,9 +127,9 @@ export default function App() {
           
           <div className="card calculator-card">
             
-            {/* Header */}
+            
             <div className="card-header-custom">
-              <h3 className="mb-0 fw-bold">📦 FastExpress</h3>
+              <h3 className="mb-0 fw-bold">FastExpress📦</h3>
               <small className="opacity-75">Calculadora de Tarifas de Envío</small>
             </div>
 
@@ -209,7 +209,7 @@ export default function App() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn btn-primary btn-lg w-100 btn-submit-custom"
+                  className="btn btn-success btn-lg w-100 btn-submit-custom"
                 >
                   {loading ? 'Calculando...' : 'Calcular Cotización'}
                 </button>
@@ -221,12 +221,12 @@ export default function App() {
         </div>
       </div>
 
-      {/* 1. MODAL FLOTANTE DE RESULTADO (ÉXITO) */}
+  
       {showModalResult && resultado && (
         <div className="modal-overlay" onClick={() => setShowModalResult(false)}>
           <div className="modal-card-custom" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header-custom bg-light">
-              <h5 className="mb-0 fw-bold text-dark">🧾 Detalle del Envío</h5>
+            <div className="modal-header-green">
+              <h5 className="mb-0 fw-bold text-white">🧾 Detalle del Envío</h5>
               <button type="button" className="btn-close" onClick={() => setShowModalResult(false)}></button>
             </div>
             <div className="p-4">
@@ -262,7 +262,7 @@ export default function App() {
               </div>
 
               <button 
-                className="btn btn-outline-secondary w-100 mt-4 rounded-3 fw-bold py-2"
+                className="btn btn-outline-success w-100 mt-4 rounded-3 fw-bold py-2"
                 onClick={() => setShowModalResult(false)}
               >
                 Cerrar
