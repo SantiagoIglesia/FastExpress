@@ -1,0 +1,200 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f4f6f9 !important; 
+  min-height: 100vh;
+}
+
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f4f6f9;
+}
+
+
+.calculator-card {
+  border: none;
+  border-radius: 1.25rem;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  overflow: hidden;
+  max-width: 460px; 
+  margin: 0 auto;  
+}
+
+.card-header-custom {
+  background-color: #176B45;
+  color: #ffffff;
+  padding: 1.8rem 1rem;
+  text-align: center;
+}
+
+/* Tarjeta principal */
+.calculator-card {
+  border: none;
+  border-radius: 1.25rem;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+  background: #F7FAF8;
+}
+
+.card-header-custom {
+  background: linear-gradient(135deg, #176B45, #176B45);
+  color: #F7FAF8;
+  padding: 1.8rem 1rem;
+  text-align: center;
+  border-top-left-radius: 1.25rem;
+  border-top-right-radius: 1.25rem;
+}
+
+/* Indicador de estado de API */
+.status-pill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 50rem;
+}
+
+.status-online {
+  background-color: #e6f4ea;
+  color: #137333;
+}
+
+.status-offline {
+  background-color: #fef7e0;
+  color: #b06000;
+}
+
+/* Formulario */
+.form-label-custom {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: #495057;
+}
+
+.helper-text {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+.btn-submit-custom {
+  font-weight: 700;
+  padding: 0.85rem;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease-in-out;
+  letter-spacing: 0.5px;
+}
+
+.btn-submit-custom:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(13, 110, 253, 0.3);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+.modal-card-custom {
+  background: #F7FAF8;
+  border-radius: 1.25rem;
+  max-width: 440px;
+  width: 90%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: scaleUp 0.25s ease-in-out;
+}
+
+.modal-header-green {
+  background-color: #176B45;
+  color: #ffffff;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top-left-radius: 1.25rem;
+  border-top-right-radius: 1.25rem;
+}
+
+.receipt-header-modal {
+ background: #F7FAF8;
+  border-radius: 1.25rem;
+  max-width: 440px;
+  width: 90%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: scaleUp 0.25s ease-in-out;
+}
+
+.modal-header-custom {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-error-banner {
+  border-radius: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+
+.receipt-total-banner {
+  background: linear-gradient(135deg, #e6f4ea, #d1e7dd);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.receipt-total-label {
+  font-size: 0.8rem;
+  color: #137333;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.receipt-total-amount {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #0f5132;
+  line-height: 1.2;
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  padding: 0.4rem 0;
+  color: #495057;
+}
+
+.receipt-divider {
+  border-top: 1px dashed #ced4da;
+  margin: 0.75rem 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
