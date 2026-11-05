@@ -82,10 +82,10 @@ export default function App() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          Cliente_Cod: formData.clienteCod || null,
-          Peso_Envio: pesoNum,
-          Tipo_Env_Cod: tipoEnvioCod,
-          Tipo_Cli_Cod: tipoClienteCod
+          cliente_cod: formData.clienteCod || null,
+          peso_envio: pesoNum,
+          tipo_env_cod: tipoEnvioCod,
+          tipo_cli_cod: tipoClienteCod
         }),
       });
 
@@ -104,7 +104,7 @@ export default function App() {
       });
       setShowModalResult(true);
     } catch (err) {
-      
+
       // MOCK BACKUP: Cálculo local directo si la API de Laravel está apagada
       const tarifaBase = 5.00;
       const precioPorKg = pesoNum <= 5.00 ? 2.00 : 4.00;
